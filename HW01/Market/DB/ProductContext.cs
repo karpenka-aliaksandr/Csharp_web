@@ -7,8 +7,8 @@ namespace Market.DB
     public class ProductContext : DbContext
     {
         public DbSet<Product> Products { get; set; }
-        public DbSet<Models.Storage> Storages { get; set; }
-        public DbSet<Group> Group { get; set; }
+        public DbSet<Storage> Storages { get; set; }
+        public DbSet<ProductGroup> ProductGroups { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseLazyLoadingProxies().UseNpgsql("Host=localhost;Port=5432;Username=admin;Password=Market1234;Database=Market");
@@ -32,7 +32,7 @@ namespace Market.DB
                 entity.HasOne(e => e.Group).WithMany(g => g.Products).HasForeignKey(e=>e.GroupId);
             });
             
-            modelBuilder.Entity<Group>(entity =>
+            modelBuilder.Entity<ProductGroup>(entity =>
             {
                 entity.HasKey(e => e.Id).HasName("group_pkey");
 

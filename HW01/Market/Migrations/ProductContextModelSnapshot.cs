@@ -25,31 +25,6 @@ namespace Market.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Market.Models.Group", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("description");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("name");
-
-                    b.HasKey("Id")
-                        .HasName("group_pkey");
-
-                    b.ToTable("groups", (string)null);
-                });
-
             modelBuilder.Entity("Market.Models.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -60,7 +35,6 @@ namespace Market.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(1024)
                         .HasColumnType("character varying(1024)")
                         .HasColumnName("description");
@@ -80,6 +54,30 @@ namespace Market.Migrations
                     b.HasIndex("GroupId");
 
                     b.ToTable("products", (string)null);
+                });
+
+            modelBuilder.Entity("Market.Models.ProductGroup", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text")
+                        .HasColumnName("description");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id")
+                        .HasName("group_pkey");
+
+                    b.ToTable("groups", (string)null);
                 });
 
             modelBuilder.Entity("Market.Models.ProductStorage", b =>
@@ -122,7 +120,7 @@ namespace Market.Migrations
 
             modelBuilder.Entity("Market.Models.Product", b =>
                 {
-                    b.HasOne("Market.Models.Group", "Group")
+                    b.HasOne("Market.Models.ProductGroup", "Group")
                         .WithMany("Products")
                         .HasForeignKey("GroupId");
 
@@ -148,14 +146,14 @@ namespace Market.Migrations
                     b.Navigation("Storage");
                 });
 
-            modelBuilder.Entity("Market.Models.Group", b =>
-                {
-                    b.Navigation("Products");
-                });
-
             modelBuilder.Entity("Market.Models.Product", b =>
                 {
                     b.Navigation("Storages");
+                });
+
+            modelBuilder.Entity("Market.Models.ProductGroup", b =>
+                {
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("Market.Models.Storage", b =>

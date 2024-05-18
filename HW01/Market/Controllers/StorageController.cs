@@ -6,22 +6,22 @@ namespace Market.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class ProductController : ControllerBase
+    public class StorageController : ControllerBase
     {
-        [HttpPost(template: "addproduct")]
-        public ActionResult AddProduct(string name, string? description)
+        [HttpPost(template: "addstorage")]
+        public ActionResult AddStorage(string name)
         {
             try
             {
                 using (var ctx = new ProductContext())
                 {
-                    if (ctx.Products.Any(x => x.Name.ToLower() == name.ToLower()))
+                    if (ctx.Storages.Any(x => x.Name.ToLower() == name.ToLower()))
                     {
                         return StatusCode(409);
                     }
                     else
                     {
-                        ctx.Products.Add(new Product { Name = name, Description = description });
+                        ctx.Storages.Add(new Models.Storage { Name = name });
                         ctx.SaveChanges();
                     }
                 }
@@ -32,14 +32,14 @@ namespace Market.Controllers
                 return StatusCode(500);
             }
         }
-        [HttpGet(template: "getproducts")]
-        public ActionResult<IEnumerable<Product>> GetProducts()
+        [HttpGet(template: "getstorages")]
+        public ActionResult<IEnumerable<Models.Storage>> GetStorages()
         {
             try
             {
                 using (var ctx = new ProductContext())
                 {
-                    var list = ctx.Products.Select(x => new Product { Id = x.Id, Name = x.Name, Description = x.Description }).ToList();
+                    var list = ctx.Storages.Select(x => new Models.Storage { Id = x.Id, Name = x.Name}).ToList();
                     return list;
                 }
             }
@@ -49,17 +49,17 @@ namespace Market.Controllers
             }
         }
 
-        [HttpDelete(template: "deleteproduct")]
-        public ActionResult DeleteProduct(string name)
+        [HttpDelete(template: "deletestorage")]
+        public ActionResult DeleteStorage(string name)
         {
             try
             {
                 using (var ctx = new ProductContext())
                 {
-                    var product = ctx.Products.FirstOrDefault(x => x.Name == name);
-                    if (product != null)
+                    var storage = ctx.Storages.FirstOrDefault(x => x.Name == name);
+                    if (storage != null)
                     {
-                        ctx.Products.Remove(product);
+                        ctx.Storages.Remove(storage);
                         ctx.SaveChanges();
                         return Ok();
                     }

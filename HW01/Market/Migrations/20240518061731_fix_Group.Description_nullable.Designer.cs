@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Market.Migrations
 {
     [DbContext(typeof(ProductContext))]
-    [Migration("20240517115845_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20240518061731_fix_Group.Description_nullable")]
+    partial class fix_GroupDescription_nullable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -28,31 +28,6 @@ namespace Market.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Market.Models.ProductGroup", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("description");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("name");
-
-                    b.HasKey("Id")
-                        .HasName("group_pkey");
-
-                    b.ToTable("groups", (string)null);
-                });
-
             modelBuilder.Entity("Market.Models.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -63,7 +38,6 @@ namespace Market.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(1024)
                         .HasColumnType("character varying(1024)")
                         .HasColumnName("description");
@@ -83,6 +57,30 @@ namespace Market.Migrations
                     b.HasIndex("GroupId");
 
                     b.ToTable("products", (string)null);
+                });
+
+            modelBuilder.Entity("Market.Models.ProductGroup", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text")
+                        .HasColumnName("description");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id")
+                        .HasName("group_pkey");
+
+                    b.ToTable("groups", (string)null);
                 });
 
             modelBuilder.Entity("Market.Models.ProductStorage", b =>
@@ -125,11 +123,11 @@ namespace Market.Migrations
 
             modelBuilder.Entity("Market.Models.Product", b =>
                 {
-                    b.HasOne("Market.Models.ProductGroup", "ProductGroup")
+                    b.HasOne("Market.Models.ProductGroup", "Group")
                         .WithMany("Products")
                         .HasForeignKey("GroupId");
 
-                    b.Navigation("ProductGroup");
+                    b.Navigation("Group");
                 });
 
             modelBuilder.Entity("Market.Models.ProductStorage", b =>
@@ -151,14 +149,14 @@ namespace Market.Migrations
                     b.Navigation("Storage");
                 });
 
-            modelBuilder.Entity("Market.Models.ProductGroup", b =>
-                {
-                    b.Navigation("Products");
-                });
-
             modelBuilder.Entity("Market.Models.Product", b =>
                 {
                     b.Navigation("Storages");
+                });
+
+            modelBuilder.Entity("Market.Models.ProductGroup", b =>
+                {
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("Market.Models.Storage", b =>

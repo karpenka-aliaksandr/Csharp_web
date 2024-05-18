@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Market.Migrations
 {
     [DbContext(typeof(ProductContext))]
-    [Migration("20240517115845_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20240518053847_Product.Description_nullable")]
+    partial class ProductDescription_nullable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,6 +27,37 @@ namespace Market.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("Market.Models.Product", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)")
+                        .HasColumnName("description");
+
+                    b.Property<int?>("GroupId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id")
+                        .HasName("product_pkey");
+
+                    b.HasIndex("GroupId");
+
+                    b.ToTable("products", (string)null);
+                });
 
             modelBuilder.Entity("Market.Models.ProductGroup", b =>
                 {
@@ -51,38 +82,6 @@ namespace Market.Migrations
                         .HasName("group_pkey");
 
                     b.ToTable("groups", (string)null);
-                });
-
-            modelBuilder.Entity("Market.Models.Product", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(1024)
-                        .HasColumnType("character varying(1024)")
-                        .HasColumnName("description");
-
-                    b.Property<int?>("GroupId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
-                        .HasColumnName("name");
-
-                    b.HasKey("Id")
-                        .HasName("product_pkey");
-
-                    b.HasIndex("GroupId");
-
-                    b.ToTable("products", (string)null);
                 });
 
             modelBuilder.Entity("Market.Models.ProductStorage", b =>
@@ -125,11 +124,11 @@ namespace Market.Migrations
 
             modelBuilder.Entity("Market.Models.Product", b =>
                 {
-                    b.HasOne("Market.Models.ProductGroup", "ProductGroup")
+                    b.HasOne("Market.Models.ProductGroup", "Group")
                         .WithMany("Products")
                         .HasForeignKey("GroupId");
 
-                    b.Navigation("ProductGroup");
+                    b.Navigation("Group");
                 });
 
             modelBuilder.Entity("Market.Models.ProductStorage", b =>
@@ -151,14 +150,14 @@ namespace Market.Migrations
                     b.Navigation("Storage");
                 });
 
-            modelBuilder.Entity("Market.Models.ProductGroup", b =>
-                {
-                    b.Navigation("Products");
-                });
-
             modelBuilder.Entity("Market.Models.Product", b =>
                 {
                     b.Navigation("Storages");
+                });
+
+            modelBuilder.Entity("Market.Models.ProductGroup", b =>
+                {
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("Market.Models.Storage", b =>

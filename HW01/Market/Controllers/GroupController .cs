@@ -6,22 +6,22 @@ namespace Market.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class ProductController : ControllerBase
+    public class GroupController : ControllerBase
     {
-        [HttpPost(template: "addproduct")]
-        public ActionResult AddProduct(string name, string? description)
+        [HttpPost(template: "addgroup")]
+        public ActionResult AddGroup(string name, string? description)
         {
             try
             {
                 using (var ctx = new ProductContext())
                 {
-                    if (ctx.Products.Any(x => x.Name.ToLower() == name.ToLower()))
+                    if (ctx.ProductGroups.Any(x => x.Name.ToLower() == name.ToLower()))
                     {
                         return StatusCode(409);
                     }
                     else
                     {
-                        ctx.Products.Add(new Product { Name = name, Description = description });
+                        ctx.ProductGroups.Add(new ProductGroup { Name = name, Description = description });
                         ctx.SaveChanges();
                     }
                 }
@@ -32,14 +32,14 @@ namespace Market.Controllers
                 return StatusCode(500);
             }
         }
-        [HttpGet(template: "getproducts")]
-        public ActionResult<IEnumerable<Product>> GetProducts()
+        [HttpGet(template: "getgroups")]
+        public ActionResult<IEnumerable<ProductGroup>> GetGroups()
         {
             try
             {
                 using (var ctx = new ProductContext())
                 {
-                    var list = ctx.Products.Select(x => new Product { Id = x.Id, Name = x.Name, Description = x.Description }).ToList();
+                    var list = ctx.ProductGroups.Select(x => new ProductGroup { Id = x.Id, Name = x.Name, Description = x.Description }).ToList();
                     return list;
                 }
             }
@@ -49,17 +49,17 @@ namespace Market.Controllers
             }
         }
 
-        [HttpDelete(template: "deleteproduct")]
-        public ActionResult DeleteProduct(string name)
+        [HttpDelete(template: "deletegroup")]
+        public ActionResult DeleteGroup(string name)
         {
             try
             {
                 using (var ctx = new ProductContext())
                 {
-                    var product = ctx.Products.FirstOrDefault(x => x.Name == name);
-                    if (product != null)
+                    var productGroup = ctx.ProductGroups.FirstOrDefault(x => x.Name == name);
+                    if (productGroup != null)
                     {
-                        ctx.Products.Remove(product);
+                        ctx.ProductGroups.Remove(productGroup);
                         ctx.SaveChanges();
                         return Ok();
                     }
