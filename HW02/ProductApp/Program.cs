@@ -4,6 +4,7 @@ using Autofac;
 using ProductApp.Repo.Abstraction;
 using ProductApp.Mapping;
 using ProductApp.Repo;
+using ProductApp.DB;
 
 namespace ProductApp
 {
@@ -23,8 +24,12 @@ namespace ProductApp
             builder.Services.AddAutoMapper(typeof(MappingProfile));
             builder.Services.AddMemoryCache(x => x.TrackStatistics = true);
             builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+            var config = new ConfigurationBuilder();
+            config.AddJsonFile("appsettings.json");
+            var cfg = config.Build();
             builder.Host.ConfigureContainer<ContainerBuilder>(cb =>
             {
+                cb.Register(c => new ProductContext(cfg.GetConnectionString("ProductDB"))).InstancePerDependency();
                 cb.RegisterType<ProductRepo>().As<IProductRepo>();
                 cb.RegisterType<ProductGroupRepo>().As<IProductGroupRepo>();
             });

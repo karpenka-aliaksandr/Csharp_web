@@ -11,22 +11,24 @@ namespace ProductApp.Repo
     {
         private readonly IMapper _mapper;
         private IMemoryCache _memoryCache;
-        public ProductGroupRepo(IMapper mapper, IMemoryCache memoryCache)
+        private ProductContext _context;
+        public ProductGroupRepo(IMapper mapper, IMemoryCache memoryCache, ProductContext context)
         {
             _mapper = mapper;
             _memoryCache = memoryCache;
+            _context = context;
         }
 
         public int AddProductGroup(ProductGroupDTORequest productGroupDTORequest)
         {
-            using (var context = new ProductContext())
+            using (_context)
             {
-                var entityProductGroup = context.Products.FirstOrDefault(x => x.Name.ToLower().Equals(productGroupDTORequest.Name.ToLower()));
+                var entityProductGroup = _context.Products.FirstOrDefault(x => x.Name.ToLower().Equals(productGroupDTORequest.Name.ToLower()));
                 if (entityProductGroup == null)
                 {
                     var entity = _mapper.Map<ProductGroup>(productGroupDTORequest);
-                    context.ProductGroups.Add(entity);
-                    context.SaveChanges();
+                    _context.ProductGroups.Add(entity);
+                    _context.SaveChanges();
                     _memoryCache.Remove("productGroups");
                     return entity.Id;
                 }
@@ -43,9 +45,9 @@ namespace ProductApp.Repo
             {
                 return productGroupsCache;
             }
-            using (var context = new ProductContext())
+            using (_context)
             {
-                var productGroups = context.ProductGroups.Select(_mapper.Map<ProductGroupDTOResponse>).ToList();
+                var productGroups = _context.ProductGroups.Select(_mapper.Map<ProductGroupDTOResponse>).ToList();
                 _memoryCache.Set("productGroups", productGroups, TimeSpan.FromMinutes(30));
                 return productGroups;
             }
@@ -53,14 +55,14 @@ namespace ProductApp.Repo
 
         public ProductGroupDTOResponse DeleteProductGroup(int id)
         {
-            using (var context = new ProductContext())
+            using (_context)
             {
 
-                var entityProductGroup = context.ProductGroups.FirstOrDefault(x => x.Id == id);
+                var entityProductGroup = _context.ProductGroups.FirstOrDefault(x => x.Id == id);
                 if (entityProductGroup != null)
                 {
-                    context.ProductGroups.Remove(entityProductGroup);
-                    context.SaveChanges();
+                    _context.ProductGroups.Remove(entityProductGroup);
+                    _context.SaveChanges();
                     _memoryCache.Remove("productGroups");
                     return _mapper.Map<ProductGroupDTOResponse>(entityProductGroup);
                 }

@@ -5,11 +5,19 @@ namespace ProductApp.DB
 {
     public class ProductContext : DbContext
     {
+        private string _connectionString;
+        public ProductContext() 
+        { 
+        }
+        public ProductContext(string connectionString)
+        {
+            _connectionString = connectionString;
+        }
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductGroup> ProductGroups { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseLazyLoadingProxies().UseNpgsql("Host=localhost;Port=5432;Username=admin;Password=admin1234;Database=ProductDB");
+            optionsBuilder.UseLazyLoadingProxies().UseNpgsql(_connectionString);
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

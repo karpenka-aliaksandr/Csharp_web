@@ -11,22 +11,25 @@ namespace ProductApp.Repo
     {
         private readonly IMapper _mapper;
         private IMemoryCache _memoryCache;
-        public ProductRepo(IMapper mapper, IMemoryCache memoryCache)
+        private ProductContext _context;
+        public ProductRepo(IMapper mapper, IMemoryCache memoryCache, ProductContext context)
         {
             _mapper = mapper;
             _memoryCache = memoryCache;
+            _context = context;
+
         }
         public int AddProduct(ProductDTORequest productDTORequest)
         {
-            using (var context = new ProductContext())
+            using (_context)
             {
 
-                var product = context.Products.FirstOrDefault(x => x.Name.ToLower().Equals(productDTORequest.Name.ToLower()));
+                var product = _context.Products.FirstOrDefault(x => x.Name.ToLower().Equals(productDTORequest.Name.ToLower()));
                 if (product == null)
                 {
                     var entity = _mapper.Map<Product>(productDTORequest);
-                    context.Products.Add(entity);
-                    context.SaveChanges();
+                    _context.Products.Add(entity);
+                    _context.SaveChanges();
                     _memoryCache.Remove("products");
                     return entity.Id;
                 }
@@ -43,9 +46,9 @@ namespace ProductApp.Repo
             {
                 return productsCache;
             }
-            using (var context = new ProductContext())
+            using (_context)
             {
-                var products = context.Products.Select(_mapper.Map<ProductDTOResponse>).ToList();
+                var products = _context.Products.Select(_mapper.Map<ProductDTOResponse>).ToList();
                 _memoryCache.Set("products", products, TimeSpan.FromMinutes(30));
                 return products;
             }
@@ -53,14 +56,14 @@ namespace ProductApp.Repo
 
         public ProductDTOResponse DeleteProduct(int id)
         {
-            using (var context = new ProductContext())
+            using (_context)
             {
 
-                var entityProduct = context.Products.FirstOrDefault(x => x.Id == id);
+                var entityProduct = _context.Products.FirstOrDefault(x => x.Id == id);
                 if (entityProduct != null)
                 {
-                    context.Products.Remove(entityProduct);
-                    context.SaveChanges();
+                    _context.Products.Remove(entityProduct);
+                    _context.SaveChanges();
                     _memoryCache.Remove("products");
                     return _mapper.Map<ProductDTOResponse>(entityProduct);
                 }
