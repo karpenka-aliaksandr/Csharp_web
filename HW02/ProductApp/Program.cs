@@ -5,6 +5,7 @@ using ProductApp.Repo.Abstraction;
 using ProductApp.Mapping;
 using ProductApp.Repo;
 using ProductApp.DB;
+using Microsoft.Extensions.FileProviders;
 
 namespace ProductApp
 {
@@ -42,6 +43,16 @@ namespace ProductApp
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            var staticFilePath = Path.Combine(Directory.GetCurrentDirectory(), "StaticFiles");
+            Directory.CreateDirectory(staticFilePath);
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(staticFilePath),
+                RequestPath = "/static"
+            });
+
 
             app.UseHttpsRedirection();
 
