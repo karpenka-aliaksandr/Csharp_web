@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ProductApp.DTO;
-using ProductApp.Model;
 using ProductApp.Repo.Abstraction;
 using System.Text;
 

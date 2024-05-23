@@ -22,7 +22,7 @@ namespace ProductApp
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddAutoMapper(typeof(MappingProfile));
-            builder.Services.AddMemoryCache(x => x.TrackStatistics = true);
+            builder.Services.AddMemoryCache(options => options.TrackStatistics = true);
             builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
             var config = new ConfigurationBuilder();
             config.AddJsonFile("appsettings.json");
