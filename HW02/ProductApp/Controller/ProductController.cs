@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ProductApp.DTO;
+using ProductApp.Model;
 using ProductApp.Repo.Abstraction;
+using System.Text;
 
 namespace ProductApp.Controller
 {
@@ -56,10 +58,24 @@ namespace ProductApp.Controller
             }
         }
 
+        private string GetCsv(IEnumerable<ProductDTOResponse> products)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("ID;Name;Description");
+            foreach (var product in products)
+            {
+                sb.AppendLine(product.Id + ";" + product.Name + ";" + product.Description);
+            }
+            return sb.ToString();
+        }
 
-       
-
+        [HttpGet(template: "getproductscsv")]
+        public FileContentResult GetProductsCsv()
+        {
+            var sb = new StringBuilder();
+            var products = _repo.GetProducts().ToList();
+            var content = GetCsv(products);
+            return File(new UTF8Encoding().GetBytes(content), "text/scv", "products.csv");
+        }
     }
-
-
 }
