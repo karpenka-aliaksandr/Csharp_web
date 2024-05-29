@@ -120,7 +120,7 @@ namespace ProductApp.Controller
         }
 
         [HttpGet(template: "CheckProduct")]
-        public ActionResult<bool> CheckBook(int id)
+        public ActionResult<bool> CheckProduct(int id)
         {
             return Ok(_repo.CheckProduct(id));
         }

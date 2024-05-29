@@ -34,8 +34,11 @@ namespace ProductApp.DB
                 entity.Property(e => e.Description)
                     .HasMaxLength(1024)
                     .HasColumnName("description");
+                entity.Property(e => e.GroupId).HasColumnName("group_id");
 
-                entity.HasOne(e => e.Group).WithMany(g => g.Products).HasForeignKey(e=>e.GroupId);
+                entity.HasOne(e => e.Group)
+                    .WithMany(g => g.Products)
+                    .HasForeignKey(e=>e.GroupId);
             });
             
             modelBuilder.Entity<ProductGroup>(entity =>
