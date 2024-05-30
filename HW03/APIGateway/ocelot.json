@@ -1,0 +1,98 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/Product/{method}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7132
+        }
+      ],
+      "UpstreamPathTemplate": "/Product/{method}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Delete" ],
+      "SwaggerKey": "Products"
+    },
+
+    {
+      "DownstreamPathTemplate": "/MemoryCache/{method}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7132
+        }
+      ],
+      "UpstreamPathTemplate": "/MemoryCache/{method}",
+      "UpstreamHttpMethod": [ "Get" ],
+      "SwaggerKey": "Products"
+    },
+
+    {
+      "DownstreamPathTemplate": "/Storage/{method}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7163
+        }
+      ],
+      "UpstreamPathTemplate": "/Storage/{method}",
+      "UpstreamHttpMethod": [ "Get", "Post" ],
+      "SwaggerKey": "Storage"
+    },
+    {
+      "DownstreamPathTemplate": "/ProductInStorage/{method}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7054
+        }
+      ],
+      "UpstreamPathTemplate": "/ProductInStorage/{method}",
+      "UpstreamHttpMethod": [ "Get", "Post" ],
+      "SwaggerKey": "ProductInStorage"
+    }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "https://localhost:6696"
+  },
+
+  "SwaggerEndPoints": [
+    {
+      "Key": "Products",
+      "TransformByOcelotConfig": false,
+      "Config": [
+        {
+          "Name": "Products API",
+          "Version": "v1",
+          "Url": "https://localhost:7132/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "Storage",
+      "TransformByOcelotConfig": false,
+      "Config": [
+        {
+          "Name": "Storage API",
+          "Version": "v1",
+          "Url": "https://localhost:7163/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "ProductInStorage",
+      "TransformByOcelotConfig": false,
+      "Config": [
+        {
+          "Name": "ProductInStorage API",
+          "Version": "v1",
+          "Url": "https://localhost:7054/swagger/v1/swagger.json"
+        }
+      ]
+    }
+  ]
+
+}
