@@ -3,6 +3,7 @@ using Autofac.Extensions.DependencyInjection;
 using Autofac;
 using ProductInStorageApp.DB;
 using ProductsInStoragesApp.Client;
+using ProductsInStoragesApp.GraphQLServices.Query;
 
 namespace ProductsInStoragesApp
 {
@@ -28,10 +29,10 @@ namespace ProductsInStoragesApp
             builder.Host.ConfigureContainer<ContainerBuilder>(cb =>
             {
                 cb.Register(c => new ProductInStorageContext(cfg.GetConnectionString("ProductInStorageDB"))).InstancePerDependency();
-                cb.RegisterType<ProductInStorageRepo>().As<IProductInStorageRepo>();
-                cb.RegisterType<ProductsClient>().As<IProductsClient>();
-                cb.RegisterType<StoragesClient>().As<IStoragesClient>();
             });
+            builder.Services.AddSingleton<IProductsClient, ProductsClient>();
+            builder.Services.AddTransient<IProductInStorageRepo, ProductInStorageRepo>().AddGraphQLServer().AddQueryType<Query>();
+            builder.Services.AddSingleton<IStoragesClient, StoragesClient>();
 
             var app = builder.Build();
 
@@ -48,6 +49,7 @@ namespace ProductsInStoragesApp
 
 
             app.MapControllers();
+            app.MapGraphQL();
 
             app.Run();
         }

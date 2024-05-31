@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ProductInStorageApp.DTO;
+using System;
 namespace ProductsInStoragesApp.Client
 {
 	public class ProductsClient:IProductsClient
@@ -23,6 +24,16 @@ namespace ProductsInStoragesApp.Client
 
             throw new Exception("Unknow response");
         }
+
+        public async Task<IEnumerable<ProductDTOResponse>> GetProducts()
+        {
+            IEnumerable<ProductDTOResponse> data = await client.GetFromJsonAsync<IEnumerable<ProductDTOResponse>>($"https://localhost:7132/Product/GetProducts");
+            return data;
+        }
+
+
+
+
     }
     
 }

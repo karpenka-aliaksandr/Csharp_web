@@ -23,6 +23,7 @@ namespace ProductsInStoragesApp.Client
 
             throw new Exception("Unknow response");
         }
+
     }
 }
 

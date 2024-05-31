@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using ProductInStorageApp.Dto;
+using ProductInStorageApp.DTO;
 using ProductsInStoragesApp.Client;
 
 namespace StorageApp.Controllers
@@ -46,16 +47,24 @@ namespace StorageApp.Controllers
                     }
                     throw;
                 }
-
             }
             else
             {
-
                 if (!productExists)
                     return new TakeProductResultDto { Error = "Продукт не найден!" };
                 else
                     return new TakeProductResultDto { Error = "Хранилище не найдено!" };
             }
+        }
+
+        [HttpGet(template: "GetProducts")]
+        public async Task<ActionResult<IEnumerable<ProductDTOResponse>>> GetProducts()
+        {
+            var productGetProductsTask = _productsClient.GetProducts();
+
+            var products = await productGetProductsTask;
+
+            return Ok(products);
         }
 
         [HttpPost(template: "ReturnProduct")]
@@ -65,10 +74,22 @@ namespace StorageApp.Controllers
             return Ok();
         }
 
-        [HttpGet(template: "ListProducts")]
-        public ActionResult<IEnumerable<int>> ListProducts(int storageId)
+        [HttpGet(template: "ListProductsOfStorage")]
+        public ActionResult<IEnumerable<int>> ListProductsOfStorage(int storageId)
         {
-            return Ok(_repo.ListProducts(storageId));
+            return Ok(_repo.ListProductsOfStorage(storageId));
+        }
+
+        [HttpGet(template: "GetStoragesWithProducts")]
+        public ActionResult<IEnumerable<int>> GetStoragesWithProducts()
+        {
+            return Ok(_repo.GetStoragesWithProducts());
+        }
+
+        [HttpGet(template: "GetProductsInStorages")]
+        public ActionResult<IEnumerable<ProductInStorageDto>> GetProductsInStorages()
+        {
+            return Ok(_repo.GetProductsInStorages());
         }
     }
 }

@@ -37,11 +37,26 @@ public class ProductInStorageRepo : IProductInStorageRepo
         }        
     }
 
-    IEnumerable<int?> IProductInStorageRepo.ListProducts(int storageId)
+    public IEnumerable<int?> ListProductsOfStorage(int storageId)
     {
         using (_context)
         {
         return _context.ProductInStorages.Where(x => x.StorageId == storageId).Select(x => x.ProductId).ToList();
+        }
+    }
+    public IEnumerable<int?> GetStoragesWithProducts()
+    {
+        using (_context)
+        {
+            return _context.ProductInStorages.Select(x => x.StorageId).Distinct().ToList();
+        }
+    }
+
+    public IEnumerable<ProductInStorageDto> GetProductsInStorages()
+    {
+        using (_context)
+        {
+            return _context.ProductInStorages.Select(_mapper.Map<ProductInStorageDto>).ToList();
         }
     }
 }
